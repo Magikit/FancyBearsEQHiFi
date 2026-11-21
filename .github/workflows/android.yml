@@ -1,0 +1,80 @@
+name: Build All Store Releases (Google Play, Amazon, Samsung, Direct/itch.io)
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+  workflow_dispatch:
+
+jobs:
+  build-all-flavors:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Unpack ZIP if uploaded as archive
+        run: |
+          if [ ! -f "settings.gradle" ]; then
+            ZIP_FILE=$(find . -maxdepth 2 -name "*.zip" | head -n 1)
+            if [ -n "$ZIP_FILE" ]; then
+              echo "Found ZIP archive: $ZIP_FILE — extracting..."
+              unzip -o "$ZIP_FILE" -d .
+            fi
+          fi
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Generate FancyBears Publisher Signing Keystore
+        run: |
+          keytool -genkeypair -v \
+            -keystore app/fancybears-release.jks \
+            -alias fancybears \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass "FancyBears2026HiFi!" \
+            -keypass "FancyBears2026HiFi!" \
+            -dname "CN=Marcin Substyk (MagiK), OU=Audio Engineering, O=FancyBears Development, L=Oborniki, C=PL"
+
+      - name: Setup Gradle 8.7
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Build All 4 Store Variants (Google Play AAB + Amazon/Samsung/Direct APKs)
+        env:
+          KEYSTORE_PASS: "FancyBears2026HiFi!"
+          KEY_ALIAS: "fancybears"
+          KEY_PASS: "FancyBears2026HiFi!"
+        run: gradle bundleGooglePlayRelease assembleAmazonRelease assembleSamsungRelease assembleDirectRelease --no-daemon
+
+      - name: 1. Upload Google Play Store AAB (Google Play Billing)
+        uses: actions/upload-artifact@v4
+        with:
+          name: 1-GooglePlay-Store-AAB
+          path: app/build/outputs/bundle/googlePlayRelease/app-googlePlay-release.aab
+
+      - name: 2. Upload Amazon Appstore APK (Amazon IAP SDK)
+        uses: actions/upload-artifact@v4
+        with:
+          name: 2-Amazon-Appstore-APK
+          path: app/build/outputs/apk/amazon/release/app-amazon-release.apk
+
+      - name: 3. Upload Samsung Galaxy Store APK (Galaxy Store + AdMob)
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3-Samsung-GalaxyStore-APK
+          path: app/build/outputs/apk/samsung/release/app-samsung-release.apk
+
+      - name: 4. Upload Direct & itch.io APK (PayPal + BLIK + AdMob)
+        uses: actions/upload-artifact@v4
+        with:
+          name: 4-Direct-ItchIO-Friends-APK
+          path: app/build/outputs/apk/direct/release/app-direct-release.apk

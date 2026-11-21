@@ -1,0 +1,25 @@
+===================================================================
+   FANCYBEARS EQ HIFI v15 MULTI-STORE EDITION (4 WARIANTY SKLEPÓW)
+   Autor: FancyBears Development by Marcin Substyk (MagiK)
+===================================================================
+
+JEDNO REPOZYTORIUM -> 4 GOTOWE PACZKI BUDOWANE AUTOMATYCZNIE NA GITHUBIE:
+Po wgraniu tej paczki na GitHuba, zakładka Actions wygeneruje Ci
+4 osobne, podpisane pliki instalacyjne — każdy w 100% zgodny ze swoim sklepem:
+
+1. `1-GooglePlay-Store-AAB` (`app-googlePlay-release.aab`)
+   - Zawiera WYŁĄCZNIE oficjalny Google Play Billing (`billing:7.1.1`) + AdMob.
+   - Zero wzmianek o PayPalu, BLIK-u czy innych sklepach w kodzie.
+
+2. `2-Amazon-Appstore-APK` (`app-amazon-release.apk`)
+   - Zawiera oficjalny Amazon Appstore In-App Purchasing SDK (`3.0.4`) + AdMob.
+   - Obsługuje dokładnie te same 6 produktów (`coffee_2` do `coffee_100`) na Amazonie.
+
+3. `3-Samsung-GalaxyStore-APK` (`app-samsung-release.apk`)
+   - Wersja pod Samsung Galaxy Store (oraz Xiaomi GetApps / OPPO / VIVO)
+     z pełną monetyzacją AdMob (banner + reklama startowa + „Sugar for You [AD]”).
+
+4. `4-Direct-ItchIO-Friends-APK` (`app-direct-release.apk`)
+   - Wersja na itch.io oraz dla znajomych: pod przyciskiem „☕ Coffee for you”
+     otwiera bezpośrednio PayPal (`Marcin.sub21@int.pl`) na wybraną kwotę ($2–$100)
+     oraz przycisk kopiowania numeru BLIK (`+48664313176`).

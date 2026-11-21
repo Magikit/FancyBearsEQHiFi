@@ -1,0 +1,74 @@
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+}
+
+android {
+    namespace = "com.fancybears.eqhifi"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.fancybears.eqhifi"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 16
+        versionName = "3.5.3-HiFi-StoreSafe"
+    }
+
+    flavorDimensions += "store"
+    productFlavors {
+        create("googlePlay") {
+            dimension = "store"
+        }
+        create("amazon") {
+            dimension = "store"
+        }
+        create("samsung") {
+            dimension = "store"
+        }
+        create("direct") {
+            dimension = "store"
+        }
+    }
+
+    signingConfigs {
+        release {
+            def ksFile = file("fancybears-release.jks")
+            if (ksFile.exists()) {
+                storeFile ksFile
+                storePassword System.getenv("KEYSTORE_PASS") ?: "FancyBears2026HiFi!"
+                keyAlias System.getenv("KEY_ALIAS") ?: "fancybears"
+                keyPassword System.getenv("KEY_PASS") ?: "FancyBears2026HiFi!"
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            if (file("fancybears-release.jks").exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+        debug {
+            debuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
+dependencies {
+    implementation("com.google.android.gms:play-services-ads:23.5.0")
+    "googlePlayImplementation"("com.android.billingclient:billing:7.1.1")
+    "amazonImplementation"("com.amazon.device:amazon-appstore-sdk:3.0.4")
+}
